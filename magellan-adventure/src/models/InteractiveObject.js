@@ -1,4 +1,4 @@
-export default class InteractiveObject {
+export class InteractiveObject {
   constructor(x, y, name, dialogues, type, alternatingSpeakers = null) {
     this.x = x;
     this.y = y;
@@ -24,10 +24,10 @@ export default class InteractiveObject {
   advance() {
     if (this.currentDialogueIndex < this.dialogues.length - 1) {
       this.currentDialogueIndex++;
-      return false;
+      return false; // Not finished
     } else {
       if (this.onComplete) this.onComplete();
-      return true;
+      return true; // Finished
     }
   }
 

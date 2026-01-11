@@ -1,12 +1,16 @@
-import { TileType } from './TileType';
-
-export default class SceneTile {
+export class SceneTile {
   constructor(cols, rows) {
     this.cols = cols;
     this.rows = rows;
-    this.tiles = Array(cols).fill(null).map(() => Array(rows).fill(TileType.GRASS));
+    this.tiles = Array(cols).fill(null).map(() => Array(rows).fill(null));
     this.exitTiles = Array(cols).fill(null).map(() => Array(rows).fill(false));
+    this.backgroundImage = null;
     this.useBackgroundImage = false;
+  }
+
+  setBackgroundImage(imagePath) {
+    this.backgroundImage = imagePath;
+    this.useBackgroundImage = true;
   }
 
   getTile(x, y) {

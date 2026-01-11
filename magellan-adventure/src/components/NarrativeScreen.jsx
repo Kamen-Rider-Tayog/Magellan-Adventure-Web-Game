@@ -1,8 +1,6 @@
 import React from 'react';
 
-const NarrativeScreen = ({ showNarrative, narrativeText }) => {
-  if (!showNarrative) return null;
-
+const NarrativeScreen = ({ narratives, narrativeIndex, onContinue }) => {
   return (
     <div style={{
       position: 'absolute',
@@ -10,7 +8,7 @@ const NarrativeScreen = ({ showNarrative, narrativeText }) => {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(0, 0, 0, 0.9)',
+      background: 'rgba(0, 0, 0, 0.95)',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -19,11 +17,14 @@ const NarrativeScreen = ({ showNarrative, narrativeText }) => {
       color: '#DDD',
       fontSize: '24px',
       textAlign: 'center',
-      lineHeight: 1.6,
-      zIndex: 2000
+      lineHeight: 1.8,
+      fontFamily: 'serif',
+      zIndex: 200
     }}>
-      <div style={{ maxWidth: '800px' }}>
-        {narrativeText}
+      <div style={{ maxWidth: '900px' }}>
+        {(narratives[narrativeIndex] || '').split('\n').map((line, i) => (
+          <p key={i} style={{ marginBottom: '20px' }}>{line}</p>
+        ))}
       </div>
       <div style={{
         position: 'absolute',

@@ -1,4 +1,4 @@
-import { TileType } from '../game/TileType';
+import { TileType } from '../types/TileType';
 import MissionManager from '../game/MissionManager';
 
 const SceneTwo = {

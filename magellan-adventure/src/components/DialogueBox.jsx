@@ -1,8 +1,6 @@
 import React from 'react';
 
-const DialogueBox = ({ currentObject, showDialogue }) => {
-  if (!showDialogue || !currentObject) return null;
-
+const DialogueBox = ({ speaker, dialogue, onContinue }) => {
   return (
     <div style={{
       position: 'absolute',
@@ -15,23 +13,34 @@ const DialogueBox = ({ currentObject, showDialogue }) => {
       border: '4px solid #8B4513',
       borderRadius: '10px',
       padding: '20px 30px',
-      boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
-      zIndex: 1000
+      boxShadow: '0 4px 20px rgba(0,0,0,0.7)',
+      zIndex: 100
     }}>
       <div style={{
-        fontSize: '20px',
+        fontSize: '22px',
         fontWeight: 'bold',
         color: '#4A2C2A',
-        marginBottom: '10px'
+        marginBottom: '12px',
+        fontFamily: 'serif'
       }}>
-        {currentObject.getCurrentSpeaker()}:
+        {speaker}:
       </div>
       <div style={{
-        fontSize: '16px',
+        fontSize: '18px',
         color: '#6F4E37',
-        lineHeight: 1.5
+        lineHeight: 1.6
       }}>
-        {currentObject.getCurrentDialogue()}
+        {dialogue}
+      </div>
+      <div style={{
+        marginTop: '15px',
+        textAlign: 'right',
+        fontSize: '14px',
+        color: '#8B4513',
+        fontStyle: 'italic',
+        animation: 'pulse 1.5s infinite'
+      }}>
+        Press E to continue
       </div>
     </div>
   );

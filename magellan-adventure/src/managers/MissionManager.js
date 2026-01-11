@@ -1,4 +1,4 @@
-const MissionManager = {
+export const MissionManager = {
   hasTalkedToKingManuel: false,
   hasTalkedToKingCharles: false,
   hasTalkedToSailor: false,
@@ -22,5 +22,3 @@ const MissionManager = {
     this.hasTalkedToHumabon = false;
   }
 };
-
-export default MissionManager;
