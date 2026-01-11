@@ -39,7 +39,7 @@ body {
   font-style: normal;
 }
 
-/* If the font is too heavy, use this alternative with system fonts tayogpogi */
+/* If the font is too heavy, use this alternative with system fonts fck*/
 @font-face {
   font-family: 'MagellanFont';
   src: local('Times New Roman'), local('Georgia');
@@ -56,7 +56,11 @@ body {
   overflow: hidden;
 }
 
-/* Add a fallback class in case custom font doesn't load */
+/* Add a fallback class in case custom font doesn't load tayog*/
+
+
+
+
 .font-fallback {
   font-family: 'Times New Roman', Georgia, serif;
 }
