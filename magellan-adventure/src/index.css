@@ -39,7 +39,7 @@ body {
   font-style: normal;
 }
 
-/* If the font is too heavy, use this alternative with system fonts */
+/* If the font is too heavy, use this alternative with system fonts tayogpogi */
 @font-face {
   font-family: 'MagellanFont';
   src: local('Times New Roman'), local('Georgia');
