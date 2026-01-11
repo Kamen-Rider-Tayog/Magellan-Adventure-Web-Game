@@ -6,7 +6,7 @@
 
 @font-face {
   font-family: 'MagellanFont';
-  src: url('/assets/font/customFont.ttf') format('truetype');  /* CORRECT */
+  src: url('../public/assets/font/customFont.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -16,14 +16,15 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: 'MagellanFont', 'Georgia', serif;
+  font-family: 'MagellanFont', 'Georgia', 'Times New Roman', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #000;
 }
 
 /* Global font class */
 .magellan-font {
-  font-family: 'MagellanFont', 'Georgia', serif;
+  font-family: 'MagellanFont', 'Georgia', 'Times New Roman', serif;
 }
 
 #root {
@@ -31,36 +32,7 @@ body {
   height: 100vh;
 }
 
-/* Add this to your index.css file */
-@font-face {
-  font-family: 'MagellanFont';
-  src: url('../public/assets/font/customFont.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-/* If the font is too heavy, use this alternative with system fonts fck*/
-@font-face {
-  font-family: 'MagellanFont';
-  src: local('Times New Roman'), local('Georgia');
-  font-weight: normal;
-  font-style: normal;
-}
-
-body {
-  margin: 0;
-  font-family: 'MagellanFont', 'Times New Roman', serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: #000;
-  overflow: hidden;
-}
-
-/* Add a fallback class in case custom font doesn't load tayog*/
-
-
-
-
+/* Fallback class in case custom font doesn't load */
 .font-fallback {
   font-family: 'Times New Roman', Georgia, serif;
 }

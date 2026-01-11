@@ -1,6 +1,6 @@
 import React from 'react';
 
-const NarrativeScreen = ({ narratives, narrativeIndex, onContinue }) => {
+const NarrativeScreen = ({ narratives, narrativeIndex, onContinue, isMobile }) => {
   return (
     <div style={{
       position: 'absolute',
@@ -15,10 +15,10 @@ const NarrativeScreen = ({ narratives, narrativeIndex, onContinue }) => {
       justifyContent: 'center',
       padding: '40px',
       color: '#DDD',
-      fontSize: '24px',
+      fontSize: isMobile ? '18px' : '24px',
       textAlign: 'center',
       lineHeight: 1.8,
-      fontFamily: "'MagellanFont', 'Times New Roman', serif", // Custom font with fallback
+      fontFamily: "'MagellanFont', 'Times New Roman', serif",
       zIndex: 200
     }}>
       <div style={{ maxWidth: '900px' }}>
@@ -29,13 +29,13 @@ const NarrativeScreen = ({ narratives, narrativeIndex, onContinue }) => {
       <div style={{
         position: 'absolute',
         bottom: 30,
-        right: 30,
+        right: '110px',
         color: '#FFD700',
-        fontSize: '18px',
+        fontSize: isMobile ? '16px' : '18px',
         animation: 'pulse 1.5s infinite',
-        fontFamily: "'MagellanFont', 'Times New Roman', serif" // Custom font with fallback
+        fontFamily: "'MagellanFont', 'Times New Roman', serif"
       }}>
-        Press E to continue
+        {isMobile ? 'Tap E button to continue' : 'Press E to continue'}
       </div>
     </div>
   );

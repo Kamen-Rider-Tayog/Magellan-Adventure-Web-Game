@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import GamePanel from './components/GamePanel';
-import ControlsInfo from './components/ControlsInfo';
 import TitleScreen from './components/TitleScreen';
 import { imageLoader } from './utils/ImageLoader';
 import { InputHandler } from './handlers/InputHandler';
@@ -11,11 +10,11 @@ const Game = () => {
   const initializedRef = useRef(false);
 
   useEffect(() => {
-    // This will only run once
+    // Prevent double initialization
     if (initializedRef.current) return;
+    initializedRef.current = true;
     
     console.log('🎮 Game component mounting...');
-    initializedRef.current = true;
     
     const initializeGame = async () => {
       try {
@@ -35,36 +34,12 @@ const Game = () => {
     };
 
     initializeGame();
-  }, []);
+  }, []); // Empty dependency array - only run once
 
   const handleStartGame = useCallback(() => {
     console.log('🚀 Starting game...');
     setGameState('playing');
   }, []);
-
-  const handleArrowPress = useCallback((direction) => {
-    if (inputHandlerRef.current && gameState === 'playing') {
-      const keyMap = {
-        'UP': 'up',
-        'DOWN': 'down',
-        'LEFT': 'left',
-        'RIGHT': 'right'
-      };
-      inputHandlerRef.current.simulateKeyPress(keyMap[direction]);
-    }
-  }, [gameState]);
-
-  const handleArrowRelease = useCallback((direction) => {
-    if (inputHandlerRef.current && gameState === 'playing') {
-      const keyMap = {
-        'UP': 'up',
-        'DOWN': 'down',
-        'LEFT': 'left',
-        'RIGHT': 'right'
-      };
-      inputHandlerRef.current.simulateKeyRelease(keyMap[direction]);
-    }
-  }, [gameState]);
 
   const handleQuitToTitle = useCallback(() => {
     setGameState('title');
@@ -117,22 +92,10 @@ const Game = () => {
 
   // Main game
   return (
-    <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
-      <GamePanel 
-        gameState={gameState}
-        onQuitToTitle={handleQuitToTitle}
-        inputHandler={inputHandlerRef.current}
-      />
-      
-      {/* Controls overlay */}
-      {gameState === 'playing' && (
-        <ControlsInfo 
-          imageLoader={imageLoader}
-          onArrowPress={handleArrowPress}
-          onArrowRelease={handleArrowRelease}
-        />
-      )}
-    </div>
+    <GamePanel 
+      onQuitToTitle={handleQuitToTitle}
+      inputHandler={inputHandlerRef.current}
+    />
   );
 };
 

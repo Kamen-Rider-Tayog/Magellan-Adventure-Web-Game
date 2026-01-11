@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DialogueBox = ({ speaker, dialogue, onContinue }) => {
+const DialogueBox = ({ speaker, dialogue, onContinue, isMobile }) => {
   return (
     <div style={{
       position: 'absolute',
@@ -38,9 +38,10 @@ const DialogueBox = ({ speaker, dialogue, onContinue }) => {
         fontSize: '14px',
         color: '#8B4513',
         fontStyle: 'italic',
-        animation: 'pulse 1.5s infinite'
+        animation: 'pulse 1.5s infinite',
+        paddingRight: '100px'
       }}>
-        Press E to continue
+        {isMobile ? 'Tap E button to continue' : 'Press E to continue'}
       </div>
     </div>
   );
