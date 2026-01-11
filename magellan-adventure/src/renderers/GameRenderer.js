@@ -45,9 +45,6 @@ export class GameRenderer {
     
     // Draw player
     this.renderPlayer(ctx, player, camera, tileSize);
-    
-    // Draw FPS
-    this.renderFPS(ctx, gameState.fps);
   }
 
   static renderBackground(ctx, scene, camera, viewportCols, viewportRows, tileSize) {
@@ -225,26 +222,7 @@ export class GameRenderer {
     }
   }
 
-  static renderFPS(ctx, fps) {
-    ctx.fillStyle = fps > 50 ? '#0F0' : fps > 30 ? '#FF0' : '#F00';
-    ctx.font = 'bold 14px Arial';
-    ctx.textAlign = 'left';
-    ctx.fillText(`FPS: ${fps}`, 10, ctx.canvas.height - 10);
-    
-    // Draw performance indicator
-    const barWidth = 100;
-    const barHeight = 8;
-    const fpsRatio = Math.min(fps / 60, 1);
-    
-    ctx.fillStyle = '#333';
-    ctx.fillRect(10, ctx.canvas.height - 20, barWidth, barHeight);
-    
-    if (fpsRatio > 0.7) ctx.fillStyle = '#0F0';
-    else if (fpsRatio > 0.4) ctx.fillStyle = '#FF0';
-    else ctx.fillStyle = '#F00';
-    
-    ctx.fillRect(10, ctx.canvas.height - 20, barWidth * fpsRatio, barHeight);
-  }
+  
 }
 
 // Singleton instance

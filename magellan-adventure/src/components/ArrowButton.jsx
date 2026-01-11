@@ -3,10 +3,10 @@ import React from 'react';
 const ArrowButton = ({ direction, onPress, onRelease, imageLoader }) => {
   const getImage = () => {
     switch (direction) {
-      case 'UP': return imageLoader.get('arrowUp');
-      case 'DOWN': return imageLoader.get('arrowDown');
-      case 'LEFT': return imageLoader.get('arrowLeft');
-      case 'RIGHT': return imageLoader.get('arrowRight');
+      case 'UP': return imageLoader.getImage('arrow_up');
+      case 'DOWN': return imageLoader.getImage('arrow_down');
+      case 'LEFT': return imageLoader.getImage('arrow_left');
+      case 'RIGHT': return imageLoader.getImage('arrow_right');
       default: return null;
     }
   };
@@ -15,14 +15,14 @@ const ArrowButton = ({ direction, onPress, onRelease, imageLoader }) => {
     width: '60px',
     height: '60px',
     borderRadius: '30px',
-    backgroundColor: 'rgba(139, 69, 19, 0.8)',
-    border: '2px solid #FFD700',
+    backgroundColor: 'rgba(139, 69, 19, 0.9)', // Darker brown, more opaque
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
     userSelect: 'none',
-    touchAction: 'manipulation'
+    touchAction: 'manipulation',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.5)'
   };
 
   const arrowImage = getImage();
@@ -40,7 +40,7 @@ const ArrowButton = ({ direction, onPress, onRelease, imageLoader }) => {
         <img 
           src={arrowImage.src} 
           alt={direction}
-          style={{ width: '40px', height: '40px' }}
+          style={{ width: '35px', height: '35px' }}
         />
       ) : (
         <span style={{ color: '#FFF', fontSize: '24px', fontWeight: 'bold' }}>

@@ -1,26 +1,32 @@
 import React, { useEffect } from 'react';
+import { imageLoader } from '../utils/ImageLoader';
 
 const TitleScreen = ({ onStartGame }) => {
-  // Handle keyboard input (Enter key)
+  // Handle all input methods
+  const handleStart = (e) => {
+    e?.preventDefault();
+    onStartGame();
+  };
+
   useEffect(() => {
+    // Only handle Enter key
     const handleKeyPress = (e) => {
       if (e.key === 'Enter') {
-        onStartGame();
+        handleStart(e);
       }
     };
 
+    // Add listener
     window.addEventListener('keydown', handleKeyPress);
     
+    // Cleanup - remove listener
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, [onStartGame]);
+  }, [onStartGame]); // Only re-run if onStartGame changes
 
-  // Handle touch/mobile input
-  const handleTouchStart = (e) => {
-    e.preventDefault();
-    onStartGame();
-  };
+  // Get title background from image loader
+  const titleBg = imageLoader.getImage('background_title');
 
   return (
     <div 
@@ -30,14 +36,13 @@ const TitleScreen = ({ onStartGame }) => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundImage: `url('${process.env.PUBLIC_URL}/assets/backgrounds/title.png')`,
+        backgroundImage: titleBg ? `url(${titleBg.src})` : `url('${process.env.PUBLIC_URL}/assets/backgrounds/title.png')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         cursor: 'pointer',
-        fontFamily: "'MagellanFont', Georgia, serif"  // Custom font added
       }}
-      onClick={onStartGame}
-      onTouchStart={handleTouchStart}
+      onClick={handleStart}
+      onTouchStart={handleStart}
       title="Click or press Enter to start"
     />
   );

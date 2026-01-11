@@ -31,18 +31,37 @@ export class SceneManager {
 
   setupScene(sceneIndex, scene) {
     switch(sceneIndex) {
-      case 0: this.setupSceneOne(scene); break;
-      case 1: this.setupSceneTwo(scene); break;
-      case 2: this.setupSceneThree(scene); break;
-      case 3: this.setupSceneFour(scene); break;
-      case 4: this.setupSceneFive(scene); break;
-      case 5: this.setupSceneSix(scene); break;
-      default: this.setupSceneOne(scene);
+      case 0: 
+        // Scene One: Portuguese Throne Room (No background image, uses tiles only)
+        this.setupSceneOne(scene); 
+        break;
+      case 1: 
+        scene.setBackgroundImage('background_dock');
+        this.setupSceneTwo(scene); 
+        break;
+      case 2: 
+        scene.setBackgroundImage('background_ship');
+        this.setupSceneThree(scene); 
+        break;
+      case 3: 
+        scene.setBackgroundImage('background_island');
+        this.setupSceneFour(scene); 
+        break;
+      case 4: 
+        scene.setBackgroundImage('background_ship');
+        this.setupSceneFive(scene); 
+        break;
+      case 5: 
+        scene.setBackgroundImage('background_cebu');
+        this.setupSceneSix(scene); 
+        break;
+      default: 
+        this.setupSceneOne(scene);
     }
   }
 
   setupSceneOne(scene) {
-    // Checkered floor
+    // Checkered floor for throne room
     for (let x = 0; x < scene.cols; x++) {
       for (let y = 0; y < scene.rows; y++) {
         scene.setTile(x, y, (x + y) % 2 === 0 ? TileType.TILE1 : TileType.TILE2);
@@ -70,10 +89,7 @@ export class SceneManager {
   }
 
   setupSceneTwo(scene) {
-    // Use process.env.PUBLIC_URL in the path
-    scene.setBackgroundImage(`${process.env.PUBLIC_URL}/assets/backgrounds/dock.png`);
-    
-    // All grass
+    // Spanish Dock - All grass with water dock area
     for (let x = 0; x < scene.cols; x++) {
       for (let y = 0; y < scene.rows; y++) {
         scene.setTile(x, y, TileType.GRASS);
@@ -101,15 +117,14 @@ export class SceneManager {
   }
 
   setupSceneThree(scene) {
-    scene.setBackgroundImage(`${process.env.PUBLIC_URL}/assets/backgrounds/ship.png`);
-    
+    // Ship - Atlantic - Use background_ship
     for (let x = 0; x < scene.cols; x++) {
       for (let y = 0; y < scene.rows; y++) {
         scene.setTile(x, y, TileType.GRASS);
       }
     }
 
-    // Water areas (ship deck)
+    // Water areas (ship deck boundaries)
     for (let x = 0; x <= 20; x++) scene.setTile(x, 10, TileType.WATER);
     for (let x = 20; x <= 44; x++) scene.setTile(x, 11, TileType.WATER);
     for (let x = 44; x <= 61; x++) scene.setTile(x, 10, TileType.WATER);
@@ -129,8 +144,7 @@ export class SceneManager {
   }
 
   setupSceneFour(scene) {
-    scene.setBackgroundImage(`${process.env.PUBLIC_URL}/assets/backgrounds/island.png`);
-    
+    // Port St. Julian - Use background_island
     const exitX = Math.floor(scene.cols / 2);
     const exitY = 20;
     
@@ -153,14 +167,14 @@ export class SceneManager {
   }
 
   setupSceneFive(scene) {
-    scene.setBackgroundImage(`${process.env.PUBLIC_URL}/assets/backgrounds/ship.png`);
-    
+    // Ship - Pacific - Use background_ship
     for (let x = 0; x < scene.cols; x++) {
       for (let y = 0; y < scene.rows; y++) {
         scene.setTile(x, y, TileType.GRASS);
       }
     }
 
+    // Water boundaries
     for (let x = 0; x <= 20; x++) scene.setTile(x, 10, TileType.WATER);
     for (let x = 20; x <= 44; x++) scene.setTile(x, 11, TileType.WATER);
 
@@ -175,8 +189,7 @@ export class SceneManager {
   }
 
   setupSceneSix(scene) {
-    scene.setBackgroundImage(`${process.env.PUBLIC_URL}/assets/backgrounds/cebu.png`);
-    
+    // Cebu, Philippines - Use background_cebu
     const exitX = 0;
     const exitY = Math.floor(scene.rows / 2);
     
@@ -186,7 +199,7 @@ export class SceneManager {
       }
     }
 
-    // Water collision on right
+    // Water collision on right side
     for (let y = 0; y <= 64; y++) {
       scene.setTile(50, y, TileType.WATER);
     }

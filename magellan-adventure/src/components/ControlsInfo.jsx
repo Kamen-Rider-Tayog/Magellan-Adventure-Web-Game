@@ -6,33 +6,18 @@ const ControlsInfo = ({ imageLoader, onArrowPress, onArrowRelease }) => {
 
   return (
     <>
-      <div style={{
-        position: 'absolute',
-        bottom: 20,
-        left: 20,
-        color: '#FFF',
-        fontSize: '14px',
-        background: 'rgba(0,0,0,0.5)',
-        padding: '10px',
-        borderRadius: '5px',
-        zIndex: 1000
-      }}>
-        <div>WASD / Arrow Keys - Move</div>
-        <div>E - Interact / Continue</div>
-        <div>M - Toggle Map</div>
-        <div>ESC - Settings</div>
-      </div>
-
-      {/* Mobile controls */}
+      {/* Arrow controls - LOWER LEFT (Mobile Only) */}
       {isMobile && (
         <div style={{
           position: 'absolute',
           bottom: 20,
-          right: 20,
+          left: 20,
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '10px',
-          zIndex: 1000
+          zIndex: 1000,
+          padding: '10px',
+          borderRadius: '10px'
         }}>
           <div></div>
           <ArrowButton 

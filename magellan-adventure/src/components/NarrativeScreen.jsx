@@ -18,7 +18,7 @@ const NarrativeScreen = ({ narratives, narrativeIndex, onContinue }) => {
       fontSize: '24px',
       textAlign: 'center',
       lineHeight: 1.8,
-      fontFamily: "'MagellanFont', serif", // Add custom font
+      fontFamily: "'MagellanFont', 'Times New Roman', serif", // Custom font with fallback
       zIndex: 200
     }}>
       <div style={{ maxWidth: '900px' }}>
@@ -33,7 +33,7 @@ const NarrativeScreen = ({ narratives, narrativeIndex, onContinue }) => {
         color: '#FFD700',
         fontSize: '18px',
         animation: 'pulse 1.5s infinite',
-        fontFamily: "'MagellanFont', serif" // Add custom font
+        fontFamily: "'MagellanFont', 'Times New Roman', serif" // Custom font with fallback
       }}>
         Press E to continue
       </div>

@@ -14,6 +14,15 @@ export class InputHandler {
     });
   }
 
+  // NEW METHODS FOR ARROW BUTTONS
+  simulateKeyPress(key) {
+    this.keys[key] = true;
+  }
+
+  simulateKeyRelease(key) {
+    this.keys[key] = false;
+  }
+
   isKeyPressed(key) {
     return this.keys[key] || false;
   }
@@ -21,10 +30,11 @@ export class InputHandler {
   getMovement() {
     let dx = 0, dy = 0;
     
-    if (this.isKeyPressed('w') || this.isKeyPressed('arrowup')) dy = -1;
-    if (this.isKeyPressed('s') || this.isKeyPressed('arrowdown')) dy = 1;
-    if (this.isKeyPressed('a') || this.isKeyPressed('arrowleft')) dx = -1;
-    if (this.isKeyPressed('d') || this.isKeyPressed('arrowright')) dx = 1;
+    // Support both keyboard and simulated button presses
+    if (this.isKeyPressed('w') || this.isKeyPressed('arrowup') || this.isKeyPressed('up')) dy = -1;
+    if (this.isKeyPressed('s') || this.isKeyPressed('arrowdown') || this.isKeyPressed('down')) dy = 1;
+    if (this.isKeyPressed('a') || this.isKeyPressed('arrowleft') || this.isKeyPressed('left')) dx = -1;
+    if (this.isKeyPressed('d') || this.isKeyPressed('arrowright') || this.isKeyPressed('right')) dx = 1;
     
     return { dx, dy };
   }
@@ -40,5 +50,18 @@ export class InputHandler {
 
   clearKeys() {
     this.keys = {};
+  }
+
+  // Check for specific actions
+  isInteractPressed() {
+    return this.isKeyPressed('e') || this.isKeyPressed(' ');
+  }
+
+  isMapPressed() {
+    return this.isKeyPressed('m');
+  }
+
+  isPausePressed() {
+    return this.isKeyPressed('escape');
   }
 }

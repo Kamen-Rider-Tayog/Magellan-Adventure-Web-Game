@@ -583,7 +583,7 @@ const GamePanel = () => {
       {/* Controls Help */}
       <div style={{
         position: 'absolute',
-        bottom: 10,
+        top: 10,
         left: 10,
         background: 'rgba(0, 0, 0, 0.7)',
         padding: '12px',
