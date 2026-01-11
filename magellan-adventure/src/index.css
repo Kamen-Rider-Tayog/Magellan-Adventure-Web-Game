@@ -4,9 +4,26 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: 'MagellanFont';
+  src: url('/assets/font/customFont.ttf') format('truetype');  /* CORRECT */
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
+  font-family: 'MagellanFont', 'Georgia', serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Global font class */
+.magellan-font {
+  font-family: 'MagellanFont', 'Georgia', serif;
 }
 
 #root {

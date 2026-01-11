@@ -24,16 +24,13 @@ const GamePanel = () => {
   const canvasRef = useRef(null);
   const [gameState, setGameState] = useState(() => new GameStateManager().getState());
   const [showTitleScreen, setShowTitleScreen] = useState(true);
-  const [loadingProgress, setLoadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   
   // Refs for game systems
-  const gameStateRef = useRef(new GameStateManager());
   const sceneManagerRef = useRef(new SceneManager());
   const soundManagerRef = useRef(null);  // Initialize as null
   const inputHandlerRef = useRef(new InputHandler());
   const fpsCounterRef = useRef(new FPSCounter());
-  const gameRendererRef = useRef(new GameRenderer());
   const lastMoveTimeRef = useRef(0);
   const lastFrameTimeRef = useRef(0);
   
@@ -123,20 +120,7 @@ const GamePanel = () => {
       }
     }, 500);
     
-    // Handle window resize
-    const handleResize = () => {
-      // Recalculate viewport
-      const newViewportCols = Math.floor(window.innerWidth / TILE_SIZE);
-      const newViewportRows = Math.floor(window.innerHeight / TILE_SIZE);
-      
-      // Update camera if needed
-      updateCamera();
-    };
-    
-    window.addEventListener('resize', handleResize);
-    
     return () => {
-      window.removeEventListener('resize', handleResize);
       if (soundManagerRef.current) {
         soundManagerRef.current.pause();
       }
@@ -151,6 +135,88 @@ const GamePanel = () => {
     // Set initial camera position
     updateCamera();
   };
+
+  // Memoize game functions
+  const advanceNarrative = useCallback(() => {
+    setGameState(prev => {
+      const currentNarrative = NARRATIVES[prev.currentScene] || [];
+      if (prev.narrativeIndex < currentNarrative.length - 1) {
+        return { ...prev, narrativeIndex: prev.narrativeIndex + 1 };
+      } else {
+        // Narrative finished
+        if (prev.currentScene >= 6) {
+          // Game complete
+          return { ...prev, showNarrative: false };
+        }
+        return { ...prev, showNarrative: false, narrativeIndex: 0 };
+      }
+    });
+  }, [NARRATIVES]);
+
+  const advanceDialogue = useCallback(() => {
+    if (!gameState.currentObject) return;
+    
+    const finished = gameState.currentObject.advance();
+    if (finished) {
+      setGameState(prev => ({ 
+        ...prev, 
+        showDialogue: false, 
+        currentObject: null 
+      }));
+      
+      // Recreate scene with updated mission state
+      sceneRef.current = sceneManagerRef.current.createScene(gameState.currentScene);
+    } else {
+      setGameState(prev => ({ ...prev }));
+    }
+  }, [gameState.currentObject, gameState.currentScene]);
+
+  const checkInteraction = useCallback(() => {
+    const { player } = gameState;
+    const interactingObject = CollisionDetector.checkInteraction(
+      player.x, player.y, player.direction, objectsRef.current
+    );
+    
+    if (interactingObject) {
+      interactingObject.reset();
+      setGameState(prev => ({
+        ...prev,
+        showDialogue: true,
+        currentObject: interactingObject
+      }));
+    }
+  }, [gameState]);
+
+  const updateCamera = useCallback(() => {
+    if (!sceneRef.current) return;
+    
+    const scene = sceneRef.current;
+    const { player } = gameState;
+    
+    let camX = player.x - Math.floor(VIEWPORT_COLS / 2);
+    let camY = player.y - Math.floor(VIEWPORT_ROWS / 2);
+    
+    camX = Math.max(0, Math.min(camX, scene.cols - VIEWPORT_COLS));
+    camY = Math.max(0, Math.min(camY, scene.rows - VIEWPORT_ROWS));
+    
+    if (scene.cols <= VIEWPORT_COLS) camX = -Math.floor((VIEWPORT_COLS - scene.cols) / 2);
+    if (scene.rows <= VIEWPORT_ROWS) camY = -Math.floor((VIEWPORT_ROWS - scene.rows) / 2);
+    
+    setGameState(prev => ({ ...prev, camera: { x: camX, y: camY } }));
+  }, [gameState, VIEWPORT_COLS, VIEWPORT_ROWS]);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      updateCamera();
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [updateCamera]);
 
   // Keyboard handlers
   useEffect(() => {
@@ -187,55 +253,9 @@ const GamePanel = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, [gameState, showTitleScreen, isLoading]);
+  }, [gameState, showTitleScreen, isLoading, advanceNarrative, advanceDialogue, checkInteraction]);
 
-  // Game loop
-  useEffect(() => {
-    if (showTitleScreen || isLoading) return;
-    
-    let animationFrameId;
-    
-    const gameLoop = (timestamp) => {
-      fpsCounterRef.current.update();
-      
-      if (!gameState.showNarrative && !gameState.showDialogue && !gameState.showSettings) {
-        updatePlayer(timestamp);
-        updateCamera();
-      }
-      
-      // Update state with current FPS
-      setGameState(prev => ({
-        ...prev,
-        fps: fpsCounterRef.current.getFPS()
-      }));
-      
-      // Render
-      if (canvasRef.current) {
-        const ctx = canvasRef.current.getContext('2d');
-        GameRenderer.render(
-          ctx, 
-          sceneRef.current, 
-          objectsRef.current, 
-          gameState, 
-          VIEWPORT_COLS, 
-          VIEWPORT_ROWS, 
-          TILE_SIZE
-        );
-      }
-      
-      animationFrameId = requestAnimationFrame(gameLoop);
-    };
-    
-    animationFrameId = requestAnimationFrame(gameLoop);
-    
-    return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-    };
-  }, [gameState, showTitleScreen, isLoading]);
-
-  const updatePlayer = (timestamp) => {
+  const updatePlayer = useCallback((timestamp) => {
     const canMove = (timestamp - lastMoveTimeRef.current) >= MOVE_DELAY;
     const movement = inputHandlerRef.current.getMovement();
     const { dx, dy } = movement;
@@ -287,75 +307,53 @@ const GamePanel = () => {
         player: { ...prev.player, frame: 1 }
       }));
     }
-  };
+  }, [gameState.player]);
 
-  const updateCamera = useCallback(() => {
-    if (!sceneRef.current) return;
+  // Game loop
+  useEffect(() => {
+    if (showTitleScreen || isLoading) return;
     
-    const scene = sceneRef.current;
-    const { player } = gameState;
+    let animationFrameId;
     
-    let camX = player.x - Math.floor(VIEWPORT_COLS / 2);
-    let camY = player.y - Math.floor(VIEWPORT_ROWS / 2);
-    
-    camX = Math.max(0, Math.min(camX, scene.cols - VIEWPORT_COLS));
-    camY = Math.max(0, Math.min(camY, scene.rows - VIEWPORT_ROWS));
-    
-    if (scene.cols <= VIEWPORT_COLS) camX = -Math.floor((VIEWPORT_COLS - scene.cols) / 2);
-    if (scene.rows <= VIEWPORT_ROWS) camY = -Math.floor((VIEWPORT_ROWS - scene.rows) / 2);
-    
-    setGameState(prev => ({ ...prev, camera: { x: camX, y: camY } }));
-  }, [gameState.player, VIEWPORT_COLS, VIEWPORT_ROWS]);
-
-  const advanceNarrative = () => {
-    setGameState(prev => {
-      const currentNarrative = NARRATIVES[prev.currentScene] || [];
-      if (prev.narrativeIndex < currentNarrative.length - 1) {
-        return { ...prev, narrativeIndex: prev.narrativeIndex + 1 };
-      } else {
-        // Narrative finished
-        if (prev.currentScene >= 6) {
-          // Game complete
-          return { ...prev, showNarrative: false };
-        }
-        return { ...prev, showNarrative: false, narrativeIndex: 0 };
-      }
-    });
-  };
-
-  const advanceDialogue = () => {
-    if (!gameState.currentObject) return;
-    
-    const finished = gameState.currentObject.advance();
-    if (finished) {
-      setGameState(prev => ({ 
-        ...prev, 
-        showDialogue: false, 
-        currentObject: null 
-      }));
+    const gameLoop = (timestamp) => {
+      fpsCounterRef.current.update();
       
-      // Recreate scene with updated mission state
-      sceneRef.current = sceneManagerRef.current.createScene(gameState.currentScene);
-    } else {
-      setGameState(prev => ({ ...prev }));
-    }
-  };
-
-  const checkInteraction = () => {
-    const { player } = gameState;
-    const interactingObject = CollisionDetector.checkInteraction(
-      player.x, player.y, player.direction, objectsRef.current
-    );
-    
-    if (interactingObject) {
-      interactingObject.reset();
+      if (!gameState.showNarrative && !gameState.showDialogue && !gameState.showSettings) {
+        updatePlayer(timestamp);
+        updateCamera();
+      }
+      
+      // Update state with current FPS
       setGameState(prev => ({
         ...prev,
-        showDialogue: true,
-        currentObject: interactingObject
+        fps: fpsCounterRef.current.getFPS()
       }));
-    }
-  };
+      
+      // Render
+      if (canvasRef.current) {
+        const ctx = canvasRef.current.getContext('2d');
+        GameRenderer.render(
+          ctx, 
+          sceneRef.current, 
+          objectsRef.current, 
+          gameState, 
+          VIEWPORT_COLS, 
+          VIEWPORT_ROWS, 
+          TILE_SIZE
+        );
+      }
+      
+      animationFrameId = requestAnimationFrame(gameLoop);
+    };
+    
+    animationFrameId = requestAnimationFrame(gameLoop);
+    
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [gameState, showTitleScreen, isLoading, updatePlayer, updateCamera, VIEWPORT_COLS, VIEWPORT_ROWS]);
 
   const transitionToNextScene = () => {
     setGameState(prev => {
@@ -433,7 +431,16 @@ const GamePanel = () => {
     window.location.reload();
   };
 
+  // In your GamePanel.jsx, modify the startGame function:
   const startGame = () => {
+    console.log('Starting game...');
+    
+    // Start audio if sound manager exists
+    if (soundManagerRef.current) {
+      console.log('Attempting to play audio...');
+      soundManagerRef.current.play();
+    }
+    
     setShowTitleScreen(false);
     initializeGame();
   };
@@ -477,7 +484,7 @@ const GamePanel = () => {
           <div 
             style={{
               height: '100%',
-              width: `${loadingProgress}%`,
+              width: '100%',
               background: 'linear-gradient(to right, #228B22, #32CD32)',
               transition: 'width 0.3s ease',
               display: 'flex',
@@ -488,14 +495,14 @@ const GamePanel = () => {
               fontSize: '14px'
             }}
           >
-            {loadingProgress}%
+            100%
           </div>
         </div>
         <p style={{
           fontSize: '18px',
           color: '#DDD'
         }}>
-          Loading assets... {loadingProgress}%
+          Loading assets... 100%
         </p>
         <p style={{
           marginTop: '40px',

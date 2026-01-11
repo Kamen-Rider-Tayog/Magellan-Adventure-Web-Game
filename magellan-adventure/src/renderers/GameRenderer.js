@@ -1,4 +1,3 @@
-import { TileType } from '../types/TileType';
 import { imageLoader } from '../utils/ImageLoader';
 import { objectImageLoader } from '../utils/ObjectImageLoader';
 
@@ -52,28 +51,21 @@ export class GameRenderer {
   }
 
   static renderBackground(ctx, scene, camera, viewportCols, viewportRows, tileSize) {
-    // If we have the background image loaded, use it
     const bgKey = this.getBackgroundKey(scene.backgroundImage);
     const bgImage = imageLoader.getImage(bgKey);
     
     if (bgImage && bgImage.complete) {
-      // Draw the background image covering the viewport
-      const bgWidth = viewportCols * tileSize;
-      const bgHeight = viewportRows * tileSize;
-      
-      // Create pattern if image is smaller than viewport
-      if (bgImage.width < bgWidth || bgImage.height < bgHeight) {
-        const pattern = ctx.createPattern(bgImage, 'repeat');
-        ctx.fillStyle = pattern;
-        ctx.fillRect(0, 0, bgWidth, bgHeight);
-      } else {
-        // Draw single image
-        ctx.drawImage(bgImage, 0, 0, bgWidth, bgHeight);
-      }
+      // Draw the background image
+      ctx.drawImage(bgImage, 0, 0, ctx.canvas.width, ctx.canvas.height);
     } else {
       // Fallback to colored background
-      ctx.fillStyle = '#1a472a'; // Dark green fallback
-      ctx.fillRect(0, 0, viewportCols * tileSize, viewportRows * tileSize);
+      ctx.fillStyle = '#1a472a';
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      
+      // Debug: Show what image we tried to load
+      if (bgKey) {
+        console.log(`⚠️ Background not loaded: ${bgKey}`);
+      }
     }
   }
 
@@ -82,7 +74,8 @@ export class GameRenderer {
       'assets/backgrounds/dock.png': 'background_dock',
       'assets/backgrounds/ship.png': 'background_ship',
       'assets/backgrounds/island.png': 'background_island',
-      'assets/backgrounds/cebu.png': 'background_cebu'
+      'assets/backgrounds/cebu.png': 'background_cebu',
+      'assets/backgrounds/title.png': 'background_title'
     };
     
     return mapping[imagePath] || imagePath;
@@ -220,6 +213,8 @@ export class GameRenderer {
         case 'DOWN': ctx.fillRect(screenX + 14, screenY + 29, 4, 3); break;
         case 'LEFT': ctx.fillRect(screenX, screenY + 14, 3, 4); break;
         case 'RIGHT': ctx.fillRect(screenX + 29, screenY + 14, 3, 4); break;
+        default: // Added default case to fix ESLint warning
+          break;
       }
       
       // Player symbol

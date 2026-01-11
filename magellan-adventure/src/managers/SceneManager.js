@@ -70,7 +70,8 @@ export class SceneManager {
   }
 
   setupSceneTwo(scene) {
-    scene.setBackgroundImage('assets/backgrounds/dock.png');
+    // Use process.env.PUBLIC_URL in the path
+    scene.setBackgroundImage(`${process.env.PUBLIC_URL}/assets/backgrounds/dock.png`);
     
     // All grass
     for (let x = 0; x < scene.cols; x++) {
@@ -100,7 +101,7 @@ export class SceneManager {
   }
 
   setupSceneThree(scene) {
-    scene.setBackgroundImage('assets/backgrounds/ship.png');
+    scene.setBackgroundImage(`${process.env.PUBLIC_URL}/assets/backgrounds/ship.png`);
     
     for (let x = 0; x < scene.cols; x++) {
       for (let y = 0; y < scene.rows; y++) {
@@ -128,7 +129,7 @@ export class SceneManager {
   }
 
   setupSceneFour(scene) {
-    scene.setBackgroundImage('assets/backgrounds/island.png');
+    scene.setBackgroundImage(`${process.env.PUBLIC_URL}/assets/backgrounds/island.png`);
     
     const exitX = Math.floor(scene.cols / 2);
     const exitY = 20;
@@ -152,7 +153,7 @@ export class SceneManager {
   }
 
   setupSceneFive(scene) {
-    scene.setBackgroundImage('assets/backgrounds/ship.png');
+    scene.setBackgroundImage(`${process.env.PUBLIC_URL}/assets/backgrounds/ship.png`);
     
     for (let x = 0; x < scene.cols; x++) {
       for (let y = 0; y < scene.rows; y++) {
@@ -174,7 +175,7 @@ export class SceneManager {
   }
 
   setupSceneSix(scene) {
-    scene.setBackgroundImage('assets/backgrounds/cebu.png');
+    scene.setBackgroundImage(`${process.env.PUBLIC_URL}/assets/backgrounds/cebu.png`);
     
     const exitX = 0;
     const exitY = Math.floor(scene.rows / 2);
