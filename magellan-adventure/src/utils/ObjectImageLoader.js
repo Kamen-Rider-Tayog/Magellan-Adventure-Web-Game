@@ -19,15 +19,13 @@ export class ObjectImageLoader {
       { key: 'object_sailor1', url: 'assets/objects/sailor1.png' },
       { key: 'object_sailor2', url: 'assets/objects/sailor2.png' },
       { key: 'object_rajah', url: 'assets/objects/rajah.png' },
-      
-      // Additional objects if they exist
-      { key: 'object_ship', url: 'assets/objects/ship.png' },
-      { key: 'object_barrel', url: 'assets/objects/barrel.png' },
-      { key: 'object_chest', url: 'assets/objects/chest.png' },
     ];
 
     const promises = objectAssets.map(({ key, url }) => 
-      imageLoader.loadImage(key, url)
+      imageLoader.loadImage(key, url).catch(err => {
+        console.warn(`Failed to load ${key}:`, err);
+        return null;
+      })
     );
 
     return Promise.all(promises).then(() => {
@@ -40,10 +38,9 @@ export class ObjectImageLoader {
       });
       
       this.loaded = true;
-      console.log('All object images loaded successfully');
+      console.log('✅ All object images loaded successfully');
     }).catch(error => {
       console.error('Failed to load object images:', error);
-      throw error;
     });
   }
 
@@ -57,28 +54,29 @@ export class ObjectImageLoader {
   }
 
   /**
-   * Map ObjectType to image key
+   * Map ObjectType to image key - FIXED VERSION
    * @param {Object} objectType - ObjectType from types/ObjectType.js
-   * @returns {string} Image key
+   * @returns {string|null} Image key
    */
   getImageKeyForObjectType(objectType) {
-    const mapping = {
-      'NPC_KING': 'object_manuel',
-      'CHARLES': 'object_charles',
-      'KAWAL': 'object_kawal',
-      'SAILOR1': 'object_sailor1',
-      'SAILOR2': 'object_sailor2',
-      'HUMABON': 'object_rajah'
+    // Map by the symbol property which is unique for each object type
+    const symbolMapping = {
+      'K': 'object_manuel',      // NPC_KING
+      'C': 'object_charles',     // CHARLES
+      'G': 'object_kawal',       // KAWAL
+      'S1': 'object_sailor1',    // SAILOR1
+      'S2': 'object_sailor2',    // SAILOR2
+      'H': 'object_rajah'        // HUMABON
     };
 
-    // Find the object type by comparing properties
-    for (const [key, value] of Object.entries(mapping)) {
-      if (objectType.name === key || objectType.symbol === mapping[key]) {
-        return value;
-      }
+    const imageKey = symbolMapping[objectType.symbol];
+    
+    if (!imageKey) {
+      console.warn(`No image mapping found for object with symbol: ${objectType.symbol}`);
+      return null;
     }
-
-    return null;
+    
+    return imageKey;
   }
 
   /**
@@ -88,7 +86,15 @@ export class ObjectImageLoader {
    */
   getImageForObjectType(objectType) {
     const imageKey = this.getImageKeyForObjectType(objectType);
-    return imageKey ? this.getObjectImage(imageKey) : null;
+    if (!imageKey) return null;
+    
+    const image = this.getObjectImage(imageKey);
+    
+    if (!image) {
+      console.warn(`Image not loaded for key: ${imageKey}`);
+    }
+    
+    return image;
   }
 
   /**

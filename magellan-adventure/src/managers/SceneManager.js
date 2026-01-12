@@ -99,7 +99,7 @@ export class SceneManager {
     // Water dock area
     for (let x = 20; x <= 60; x++) {
       scene.setTile(x, 41, TileType.WATER);
-      scene.setTile(x, 48, TileType.WATER);
+      scene.setTile(x, 49, TileType.WATER);
     }
     for (let y = 41; y <= 49; y++) {
       scene.setTile(20, y, TileType.WATER);
